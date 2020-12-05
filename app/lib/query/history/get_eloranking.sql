@@ -12,7 +12,7 @@ WITH get_latest_game AS(
 SELECT
     ROW_NUMBER() OVER (ORDER BY elo DESC) AS 順位,
     username,
-    elo
+    ROUND(elo)
 FROM
     users_scores AS usc 
     LEFT OUTER JOIN users AS usr ON usc.userid = usr.userid

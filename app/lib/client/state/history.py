@@ -1,9 +1,13 @@
 from tabulate import tabulate 
 from collections import deque
 from enum import Enum, auto
+import discord
 
 # 表出力用
 import matplotlib.pyplot as plt
+import japanize_matplotlib
+import io
+from PIL import ImageFont, ImageDraw, Image
 
 from .default.processdefault import ProcessDefault
 from .default.statedefault import StateDefault
@@ -69,9 +73,31 @@ class HistoryEloRanking(HistoryDefault):
     async def do_task(self, message, data:dict):
         res = self.send_query("lib/query/history/get_eloranking.sql",[],True)
         headers = ["ランキング", "ユーザー名", "レート"]
-        await message.channel.send("```" + tabulate(res,headers,tablefmt="psql") + "```")
-        print(tabulate(res,headers,tablefmt="psql"))
+        with self.create_table(headers, res) as img:
+            await message.channel.send(file=discord.File(img, "ranking.png"))
         return 0, True
+    
+    def create_table(self, headers:list, res:list):
+        fig, ax = plt.subplots(figsize=(15,len(res)))
+        ax.axis('off')
+        ax.axis('tight')
+        tb = ax.table(cellText=res, colLabels=headers, colWidths = [0.15, 0.50, 0.25], bbox=[0,0,1,1])
+        
+        tb.set_fontsize(18)
+        tb[0, 0].set_facecolor('#719be8')
+        tb[0, 1].set_facecolor('#719be8')
+        tb[0, 2].set_facecolor('#719be8')
+        for i in range(2,len(res),2):
+            tb[i, 0].set_facecolor('#d3e0f8')
+            tb[i, 1].set_facecolor('#d3e0f8')
+            tb[i, 2].set_facecolor('#d3e0f8')
+        tb[0, 0].set_text_props(color='w')
+        tb[0, 1].set_text_props(color='w')
+        tb[0, 2].set_text_props(color='w')
+
+        plt.savefig("temp.png")
+        return open("temp.png", mode="rb")
+
 
 class HistoryEloRankingByJob(HistoryDefault):
     async def do_task(self, message, data:dict):     

@@ -8,6 +8,8 @@ discord.py==1.5.1
 distlib==0.3.1
 filelock==3.0.12
 idna==2.10
+japonize_matplotlib
+matplotlib
 multidict==4.7.6
 pipenv==2020.11.15
 Pillow==8.0.1
