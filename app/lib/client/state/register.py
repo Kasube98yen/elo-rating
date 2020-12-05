@@ -32,6 +32,10 @@ class Register(StateDefault):
             except ValueError:
                 self.process = None
                 self.transition = self.transition_reset
+    
+    def reset_process(self):
+        self.transition = self.transition_reset
+        self.process = next(self.transition)
 
 class RegisterDefault(ProcessDefault):
     async def is_valid_userdata(self, userdata, message):

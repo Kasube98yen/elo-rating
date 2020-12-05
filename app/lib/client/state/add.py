@@ -31,8 +31,7 @@ class Add(StateDefault):
         continue_trigger = True
         
         if message.content == "!reset":
-            self.transition = self.transition_reset
-            self.process = next(self.transition)
+            self.reset_process()
             return 
         while continue_trigger:
             if not message.content.startswith("!"):
@@ -40,8 +39,11 @@ class Add(StateDefault):
             try:
                 self.data, continue_trigger = await self.process.do_task(message, self.data)
             except ValueError:
-                self.process = None
-                self.transition = self.transition_reset
+                self.reset_process()
+
+    def reset_process(self):
+        self.transition = self.transition_reset
+        self.process = next(self.transition)
 
 class AddDefault(ProcessDefault):
     async def is_valid_teamdata(self, message, team):
