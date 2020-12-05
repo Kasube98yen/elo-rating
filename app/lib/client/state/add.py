@@ -1,6 +1,7 @@
 import itertools
 from collections import deque
 from statistics import mean
+from copy import copy
 
 from .default.processdefault import ProcessDefault
 from .default.statedefault import StateDefault
@@ -40,10 +41,9 @@ class Add(StateDefault):
                 self.data, continue_trigger = await self.process.do_task(message, self.data)
             except ValueError:
                 self.reset_process()
-
+    
     def reset_process(self):
-        self.transition = self.transition_reset
-        self.process = next(self.transition)
+        self.transition = copy(self.transition_reset)
 
 class AddDefault(ProcessDefault):
     async def is_valid_teamdata(self, message, team):
@@ -156,4 +156,4 @@ class AddUpdateElo(AddDefault):
         for user in elo_team2.keys():
             newR2[user] = elo_team2[user] + K * ((1 - win_corrected) - E2[user])
         
-        return newR1, newR2   
+        return newR1, newR2

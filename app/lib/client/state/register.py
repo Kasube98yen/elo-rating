@@ -1,5 +1,6 @@
 import itertools
 from collections import deque
+from copy import copy
 
 from .default.processdefault import ProcessDefault
 from .default.statedefault import StateDefault
@@ -21,8 +22,7 @@ class Register(StateDefault):
         continue_trigger = True
         
         if message.content == "!reset":
-            self.transition = self.transition_reset
-            self.process = next(self.transition)
+            self.reset.process()
             return 
         while continue_trigger:
             if not message.content.startswith("!"):
@@ -30,12 +30,10 @@ class Register(StateDefault):
             try:
                 self.data, continue_trigger = await self.process.do_task(message, self.data)
             except ValueError:
-                self.process = None
-                self.transition = self.transition_reset
+                self.reset.process()
     
     def reset_process(self):
-        self.transition = self.transition_reset
-        self.process = next(self.transition)
+        self.transition = copy(self.transition_reset)
 
 class RegisterDefault(ProcessDefault):
     async def is_valid_userdata(self, userdata, message):
