@@ -21,8 +21,8 @@ class Register(StateDefault):
         continue_trigger = True
         
         if message.content == "!reset":
-            self.process = None
             self.transition = self.transition_reset
+            self.process = next(self.transition)
             return 
         while continue_trigger:
             if not message.content.startswith("!"):

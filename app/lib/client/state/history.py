@@ -31,7 +31,7 @@ class History(StateDefault):
         continue_trigger = True
 
         if message.content == "!reset":
-            self.process = None
+            self.process = self.processmapper[0]
             return 
         if self.data["msgs"][0].startswith("!"):
             selector = 0
